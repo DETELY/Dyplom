@@ -1,0 +1,12 @@
+.link-button{
+    -fx-font-size: 16;
+    -fx-border-style: none;
+    -fx-underline: false;
+    -fx-border-width: 0;
+    -fx-text-fill: #1f97c7;
+    -fx-background-color: none;
+}
+
+.link-button:hover{
+    -fx-text-fill: #11546e;
+}
