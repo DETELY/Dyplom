@@ -2,15 +2,20 @@ package khai.detely.model;
 
 import org.graphstream.graph.implementations.SingleGraph;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Graph {
     private org.graphstream.graph.Graph graph;
 
     private Table table;
 
+    private List<Direction> directions;
+
     public Graph() {
         this.table = new Table();
         this.graph = new SingleGraph("Tutorial 1");
-        graph.setStrict(true);
+        directions = new LinkedList<>();
     }
 
     public void addNewNode(Cell topControl, Cell leftControl) {
@@ -32,5 +37,9 @@ public class Graph {
 
     public Table getTable() {
         return table;
+    }
+
+    public List<Direction> getDirections() {
+        return directions;
     }
 }

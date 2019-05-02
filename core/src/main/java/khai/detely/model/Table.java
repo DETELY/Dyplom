@@ -74,7 +74,16 @@ public class Table implements Serializable {
             .flatMap(Collection::stream)
             .filter(Objects::nonNull)
             .filter(cell -> cell.getComponent().equals(component))
-            .findFirst().orElse(new Cell(null));
+            .findFirst().orElse(new Cell(null, ""));
+    }
+
+    public Cell getCell(String name) {
+        return table
+            .stream()
+            .flatMap(Collection::stream)
+            .filter(Objects::nonNull)
+            .filter(cell -> cell.getName().equals(name))
+            .findFirst().orElse(new Cell(null, ""));
     }
 
     public Cell getLastTopCell() {
@@ -92,5 +101,4 @@ public class Table implements Serializable {
         cells.addAll(table.get(table.get(0).indexOf(topCell)));
         return cells;
     }
-
 }

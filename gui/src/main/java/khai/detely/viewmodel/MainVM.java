@@ -1,26 +1,58 @@
 package khai.detely.viewmodel;
 
-import javafx.beans.value.ObservableValue;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.SingleGraph;
+import javafx.scene.control.TextFormatter;
+import khai.detely.model.Cell;
+import khai.detely.utils.Validator;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Objects;
 
 public class MainVM {
 
-    private Graph graph = new SingleGraph("Tutorial 1");
+    private khai.detely.model.Graph graph;
 
-    private List<List<Control>> controls=new LinkedList<>();
+    public MainVM() {
+        this.graph = new khai.detely.model.Graph();
+    }
 
-    public Graph getGraph() {
+    public khai.detely.model.Graph getGraph() {
         return graph;
     }
 
-    public List<List<Control>> getControls() {
-        return controls;
+    public TextField getNewTextField() {
+        TextField textField = new TextField("-");
+        textField.setPrefWidth(50);
+
+        TextFormatter<String> formatter = new TextFormatter<>(change -> {
+            if (!change.getText().matches("[0-9.-]*")) {
+                change.setText("");
+            }
+            return change;
+        });
+        textField.setTextFormatter(formatter);
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                return;
+            }
+            if (Validator.validDouble(textField.getText())) {
+                Cell cell = graph.getTable().getCell(textField);
+                if (Objects.isNull(graph.getGraphStream().getEdge(String.valueOf(cell.hashCode())))) {
+                    graph.getGraphStream().addEdge(String.valueOf(cell.hashCode()),
+                        graph.getTable().getRowIndex(cell) - 1,
+                        graph.getTable().getColumnIndex(cell) - 1).setAttribute("ui.label", textField.getText());
+                }
+            } else {
+                textField.setText("-");
+            }
+        });
+        return textField;
+    }
+
+    public boolean validateDirectionTextField(String str) {
+        if (!Validator.validateDirectionTextField(str)) {
+            return false;
+        }
+        Cell cell = graph.getTable().getCell(str);
+        return Objects.nonNull(cell.getComponent());
     }
 }

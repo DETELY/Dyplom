@@ -1,15 +1,21 @@
 package khai.detely.view.controllers;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import khai.detely.model.Cell;
-import khai.detely.utils.Validator;
+import khai.detely.model.Direction;
+import khai.detely.model.Graph;
 import khai.detely.viewmodel.MainVM;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
@@ -19,7 +25,6 @@ import org.graphstream.ui.view.Viewer;
 
 import java.awt.*;
 import java.net.URL;
-import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -32,28 +37,33 @@ public class MainController implements Initializable {
     public GridPane gridPane;
     @FXML
     public Button removeButton;
+    @FXML
+    public TextField startNodeTextField;
+    @FXML
+    public TextField endNodeTextField;
+    @FXML
+    public TableView directionTableView;
 
+
+    private ObservableList<Direction> directions;
     private MainVM mainVM;
-
-    khai.detely.model.Graph graph;
 
     public MainController() {
         this.mainVM = new MainVM();
-        graph = new khai.detely.model.Graph();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Viewer viewer = new Viewer(graph.getGraphStream(), Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        Viewer viewer = new Viewer(mainVM.getGraph().getGraphStream(), Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        directions = FXCollections.observableArrayList();
 
         Layout layout = Layouts.newLayoutAlgorithm();
         viewer.enableAutoLayout(layout);
         GraphRenderer graphRenderer = Viewer.newGraphRenderer();
         ViewPanel graphViewPanel = viewer.addView(Viewer.DEFAULT_VIEW_ID, graphRenderer, false);
-
         graphViewPanel.setPreferredSize(new Dimension(700, 300));
-
         swingNode.setContent(graphViewPanel);
+        initTableView();
     }
 
     @FXML
@@ -62,22 +72,25 @@ public class MainController implements Initializable {
         leftControl.setPrefWidth(50);
         Button topControl = new Button("");
         topControl.setPrefWidth(50);
-        graph.addNewNode(new Cell(topControl), new Cell(leftControl));
-        leftControl.setText(String.valueOf(graph.getTable().getNodesCount()));
-        topControl.setText(String.valueOf(graph.getTable().getNodesCount()));
+        Graph graph = mainVM.getGraph();
+        String index = String.valueOf(graph.getTable().getNodesCount() + 1);
+        graph.addNewNode(new Cell(topControl, index), new Cell(leftControl, index));
+        leftControl.setText(index);
+        topControl.setText(index);
 
         gridPane.add(topControl, 0, graph.getTable().getNodesCount());
         gridPane.add(leftControl, graph.getTable().getNodesCount(), 0);
         for (int i = 1; i <= graph.getTable().getNodesCount(); i++) {
-            TextField textField = getNewTextField();
+            TextField textField = mainVM.getNewTextField();
             gridPane.add(textField, i, graph.getTable().getNodesCount());
-            graph.getTable().addRelation(graph.getTable().getNodesCount(), i, new Cell(textField));
+            graph.getTable().addRelation(graph.getTable().getNodesCount(), i, new Cell(textField, ""));
         }
         removeButton.setDisable(false);
     }
 
     @FXML
     public void btnRemoveCol_Button(ActionEvent actionEvent) {
+        Graph graph = mainVM.getGraph();
         gridPane.getChildren().removeIf(node -> GridPane.getRowIndex(node) == graph.getTable().getNodesCount());
         gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == graph.getTable().getNodesCount());
         graph.removeLastNode();
@@ -86,26 +99,32 @@ public class MainController implements Initializable {
         }
     }
 
-    private TextField getNewTextField() {
-        TextField textField = new TextField("-");
-        textField.setPrefWidth(50);
+    @FXML
+    public void addDirection(ActionEvent actionEvent) {
+        if (mainVM.validateDirectionTextField(endNodeTextField.getText())
+            && mainVM.validateDirectionTextField(startNodeTextField.getText())) {
+            directions.add(new Direction(directions.size() + 1, startNodeTextField.getText(), endNodeTextField.getText()));
+        }
+    }
 
-        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue) {
-                return;
-            }
-            if (Validator.validDouble(textField.getText())) {
-                Cell cell = graph.getTable().getCell(textField);
-                if (Objects.isNull(graph.getGraphStream().getEdge(String.valueOf(cell.hashCode())))) {
-                    graph.getGraphStream().addEdge(String.valueOf(cell.hashCode()),
-                        graph.getTable().getRowIndex(cell) - 1,
-                        graph.getTable().getColumnIndex(cell) - 1).setAttribute("ui.label", textField.getText());
-                }
-            } else {
+    @FXML
+    public void deleteDirection(ActionEvent actionEvent) {
+        directions.remove(directions.size() - 1);
+    }
 
-            }
-        });
-        return textField;
+    private void initTableView() {
+        directionTableView.setItems(directions);
+        TableColumn<Direction, String> idColumn = new TableColumn<>("Id");
+        idColumn.setCellValueFactory(new PropertyValueFactory<>("id"));
+        directionTableView.getColumns().add(idColumn);
+
+        TableColumn<Direction, String> startColumn = new TableColumn<>("Start");
+        startColumn.setCellValueFactory(new PropertyValueFactory<>("startNode"));
+        directionTableView.getColumns().add(startColumn);
+
+        TableColumn<Direction, String> endColumn = new TableColumn<>("End");
+        endColumn.setCellValueFactory(new PropertyValueFactory<>("endNode"));
+        directionTableView.getColumns().add(endColumn);
     }
 
 }
