@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.layout.*?>
 <?import javafx.embed.swing.SwingNode?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.*?>
 <BorderPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
             prefHeight="600.0" prefWidth="1000.0" styleClass="link-button" top="$null"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="khai.detely.view.controllers.MainController">
-    <bottom>
-        <AnchorPane prefHeight="100.0" prefWidth="100.0">
-            <children>
-                <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#btnAddCol_Button"
-                        styleClass="link-button" text="Add new column"/>
-            </children>
-        </AnchorPane>
-    </bottom>
+
     <center>
         <SplitPane maxHeight="+Infinity" maxWidth="+Infinity">
             <items>
@@ -28,7 +20,7 @@
                                   AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0"/>
                     </content>
                 </ScrollPane>
-                <AnchorPane prefHeight="500.0" prefWidth="771.0" HBox.hgrow="ALWAYS">
+                <AnchorPane prefHeight="500.0" prefWidth="771.0" HBox.hgrow="ALWAYS" minWidth="200">
                     <SwingNode fx:id="swingNode" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0"
                                AnchorPane.rightAnchor="0" AnchorPane.topAnchor="0">
                     </SwingNode>
@@ -36,4 +28,20 @@
             </items>
         </SplitPane>
     </center>
+    <bottom>
+        <AnchorPane prefHeight="100.0" prefWidth="100.0">
+            <children>
+                <HBox>
+                    <children>
+                        <Button minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                                onAction="#btnAddCol_Button"
+                                styleClass="link-button" text="Add new column"/>
+                        <Button fx:id="removeButton" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false"
+                                onAction="#btnRemoveCol_Button"
+                                styleClass="link-button" text="Remove last column" disable="true"/>
+                    </children>
+                </HBox>
+            </children>
+        </AnchorPane>
+    </bottom>
 </BorderPane>

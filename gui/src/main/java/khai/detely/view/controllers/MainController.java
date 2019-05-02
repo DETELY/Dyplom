@@ -1,8 +1,5 @@
 package khai.detely.view.controllers;
 
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingNode;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,9 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import khai.detely.model.Cell;
+import khai.detely.utils.Validator;
 import khai.detely.viewmodel.MainVM;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swingViewer.GraphRenderer;
@@ -22,6 +19,7 @@ import org.graphstream.ui.view.Viewer;
 
 import java.awt.*;
 import java.net.URL;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
@@ -32,20 +30,21 @@ public class MainController implements Initializable {
     public BorderPane rootPane;
     @FXML
     public GridPane gridPane;
+    @FXML
+    public Button removeButton;
 
     private MainVM mainVM;
 
-    Graph graph = new MultiGraph("Tutorial 1");
-
-    private int counter = 1;
+    khai.detely.model.Graph graph;
 
     public MainController() {
-        this.mainVM=new MainVM();
+        this.mainVM = new MainVM();
+        graph = new khai.detely.model.Graph();
     }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        Viewer viewer = new Viewer(graph.getGraphStream(), Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 
         Layout layout = Layouts.newLayoutAlgorithm();
         viewer.enableAutoLayout(layout);
@@ -59,31 +58,54 @@ public class MainController implements Initializable {
 
     @FXML
     private void btnAddCol_Button(ActionEvent event) {
-        TextField topNode=getNewTextField();
-        TextField rightNode=getNewTextField();
+        Button leftControl = new Button("");
+        leftControl.setPrefWidth(50);
+        Button topControl = new Button("");
+        topControl.setPrefWidth(50);
+        graph.addNewNode(new Cell(topControl), new Cell(leftControl));
+        leftControl.setText(String.valueOf(graph.getTable().getNodesCount()));
+        topControl.setText(String.valueOf(graph.getTable().getNodesCount()));
 
-
-
-        gridPane.add(topNode, 0, counter);
-        gridPane.add(rightNode, counter, 0);
-        for (int i = 1; i <= counter; i++) {
-            TextField textField=getNewTextField();
-            gridPane.add(textField, i, counter);
+        gridPane.add(topControl, 0, graph.getTable().getNodesCount());
+        gridPane.add(leftControl, graph.getTable().getNodesCount(), 0);
+        for (int i = 1; i <= graph.getTable().getNodesCount(); i++) {
+            TextField textField = getNewTextField();
+            gridPane.add(textField, i, graph.getTable().getNodesCount());
+            graph.getTable().addRelation(graph.getTable().getNodesCount(), i, new Cell(textField));
         }
-        graph.addNode(String.valueOf(counter));
-        counter++;
+        removeButton.setDisable(false);
     }
 
-    private TextField getNewTextField(){
-        TextField textField=new TextField("-");
-        textField.setPrefWidth(10);
+    @FXML
+    public void btnRemoveCol_Button(ActionEvent actionEvent) {
+        gridPane.getChildren().removeIf(node -> GridPane.getRowIndex(node) == graph.getTable().getNodesCount());
+        gridPane.getChildren().removeIf(node -> GridPane.getColumnIndex(node) == graph.getTable().getNodesCount());
+        graph.removeLastNode();
+        if (graph.getTable().getNodesCount() == 0) {
+            removeButton.setDisable(true);
+        }
+    }
 
-        textField.textProperty().addListener(new javafx.beans.value.ChangeListener<String>() {
-            @Override
-            public void changed(final ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                gridPane.getChildren().filtered(obj->obj.equals(observable));
+    private TextField getNewTextField() {
+        TextField textField = new TextField("-");
+        textField.setPrefWidth(50);
+
+        textField.focusedProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue) {
+                return;
+            }
+            if (Validator.validDouble(textField.getText())) {
+                Cell cell = graph.getTable().getCell(textField);
+                if (Objects.isNull(graph.getGraphStream().getEdge(String.valueOf(cell.hashCode())))) {
+                    graph.getGraphStream().addEdge(String.valueOf(cell.hashCode()),
+                        graph.getTable().getRowIndex(cell) - 1,
+                        graph.getTable().getColumnIndex(cell) - 1).setAttribute("ui.label", textField.getText());
+                }
+            } else {
+
             }
         });
         return textField;
     }
+
 }
