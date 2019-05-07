@@ -109,7 +109,9 @@ public class MainController implements Initializable {
 
     @FXML
     public void deleteDirection(ActionEvent actionEvent) {
-        directions.remove(directions.size() - 1);
+        if (directions.size() > 0) {
+            directions.remove(directions.size() - 1);
+        }
     }
 
     private void initTableView() {
