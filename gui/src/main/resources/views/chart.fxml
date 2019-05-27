@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.NumberAxis?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="400.0" prefWidth="600.0" stylesheets="@styles/linkButton.css" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="khai.detely.view.controllers.ChartController">
+    <children>
+        <LineChart fx:id="lineChart" layoutX="29.0" layoutY="194.0" prefHeight="416.0" prefWidth="1222.0" title="Chart">
+            <xAxis>
+                <CategoryAxis label="Time (s)" fx:id="xAxis" />
+            </xAxis>
+            <yAxis>
+                <NumberAxis fx:id="yAxis" label="w" side="LEFT" upperBound="160.0" />
+            </yAxis>
+        </LineChart>
+    </children>
+</VBox>

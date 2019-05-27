@@ -6,6 +6,8 @@ public class ViewConstants {
 
     public enum ViewPageName {
         CREATE_DIALOG(VIEWS + "createProject.fxml"),
+        FILL_CELL(VIEWS + "fillCell.fxml"),
+        CHART(VIEWS + "chart.fxml"),
         START_PAGE(VIEWS + "startPage.fxml"),
         MAIN(VIEWS + "main.fxml"),
         ;

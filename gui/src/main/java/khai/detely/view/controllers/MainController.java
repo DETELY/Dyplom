@@ -13,10 +13,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import khai.detely.AppConstants;
 import khai.detely.model.Cell;
 import khai.detely.model.Direction;
 import khai.detely.model.Graph;
+import khai.detely.view.ViewConstants;
+import khai.detely.view.ViewUtil;
 import khai.detely.viewmodel.MainVM;
+import org.apache.log4j.Logger;
 import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swingViewer.GraphRenderer;
@@ -24,10 +28,14 @@ import org.graphstream.ui.swingViewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 
 import java.awt.*;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class MainController implements Initializable {
+
+    private static final Logger log = Logger.getLogger(MainController.class);
+
 
     @FXML
     public SwingNode swingNode;
@@ -81,9 +89,9 @@ public class MainController implements Initializable {
         gridPane.add(topControl, 0, graph.getTable().getNodesCount());
         gridPane.add(leftControl, graph.getTable().getNodesCount(), 0);
         for (int i = 1; i <= graph.getTable().getNodesCount(); i++) {
-            TextField textField = mainVM.getNewTextField();
-            gridPane.add(textField, i, graph.getTable().getNodesCount());
-            graph.getTable().addRelation(graph.getTable().getNodesCount(), i, new Cell(textField, ""));
+            Button btn=mainVM.getNewButton();
+            gridPane.add(btn, i, graph.getTable().getNodesCount());
+            graph.getTable().addRelation(graph.getTable().getNodesCount(), i, new Cell(btn, ""));
         }
         removeButton.setDisable(false);
     }
@@ -129,4 +137,11 @@ public class MainController implements Initializable {
         directionTableView.getColumns().add(endColumn);
     }
 
+    public void btnCreateChart_Button(ActionEvent actionEvent) {
+        try {
+            ViewUtil.showModalView(ViewConstants.ViewPageName.CHART.getName(), AppConstants.PROGRAM_NAME, false);
+        } catch (IOException e) {
+            log.error(e.getMessage(), e);
+        }
+    }
 }

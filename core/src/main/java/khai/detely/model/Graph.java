@@ -12,6 +12,8 @@ public class Graph {
 
     private List<Direction> directions;
 
+    public static int m = 1;
+
     public Graph() {
         this.table = new Table();
         this.graph = new SingleGraph("Tutorial 1");

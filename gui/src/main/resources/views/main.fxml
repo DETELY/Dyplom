@@ -46,6 +46,7 @@
             <Menu mnemonicParsing="false" text="Action">
                 <MenuItem mnemonicParsing="false" text="Add new column" onAction="#btnAddCol_Button"/>
                 <MenuItem mnemonicParsing="false" text="Remove last column" onAction="#btnRemoveCol_Button"/>
+                <MenuItem mnemonicParsing="false" text="Create chart" onAction="#btnCreateChart_Button"/>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">
                 <MenuItem mnemonicParsing="false" text="About"/>

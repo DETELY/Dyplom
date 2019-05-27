@@ -16,15 +16,15 @@ public final class ViewUtil {
     private ViewUtil() {
     }
 
-    public static void showView(String fxmlFileName, String title, boolean resizable) throws IOException {
-        showView(fxmlFileName, title, resizable, false);
+    public static Stage showView(String fxmlFileName, String title, boolean resizable) throws IOException {
+        return showView(fxmlFileName, title, resizable, false);
     }
 
-    public static void showModalView(String fxmlFileName, String title, boolean resizable) throws IOException {
-        showView(fxmlFileName, title, resizable, true);
+    public static Stage showModalView(String fxmlFileName, String title, boolean resizable) throws IOException {
+        return showView(fxmlFileName, title, resizable, true);
     }
 
-    private static void showView(String fxmlFileName, String title, boolean resizable, boolean isModal) throws IOException {
+    private static Stage showView(String fxmlFileName, String title, boolean resizable, boolean isModal) throws IOException {
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(ViewUtil.class.getResource(fxmlFileName));
         Parent root = loader.load();
@@ -45,6 +45,7 @@ public final class ViewUtil {
             currentStage = stage;
         }
         stage.show();
+        return stage;
     }
 
 
