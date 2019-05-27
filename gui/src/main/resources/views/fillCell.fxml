@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+<?import khai.detely.components.NumberTextField?>
+<?import javafx.scene.layout.HBox?>
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+      prefHeight="400.0" prefWidth="600.0" stylesheets="@styles/linkButton.css" xmlns="http://javafx.com/javafx/8"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="khai.detely.view.controllers.FillCellController">
+    <children>
+        <Label text="Capacity (C): "/>
+        <NumberTextField fx:id="capacity" text="1"/>
+
+        <Label text="Window width (w): "/>
+        <NumberTextField fx:id="windowWidth" text="1"/>
+
+        <Label text="Transmission probability of distortion (Vtrn): "/>
+        <NumberTextField fx:id="transmissionProbability" text="0"/>
+
+        <Label text="Transmission acknowledgment of distortion(Vack): "/>
+        <NumberTextField fx:id="acknowledgmentProbability" text="0"/>
+
+        <Label text="communication channel time (Tm): "/>
+        <NumberTextField fx:id="channelTime" text="0"/>
+
+        <Label text="Average waiting time (t): "/>
+        <NumberTextField fx:id="delay" disable="true"/>
+
+        <HBox>
+            <Button text="Calculate" onAction="#btnCalculate_Click"/>
+            <Button text="Done" onAction="#btnDone_Click"/>
+        </HBox>
+    </children>
+</VBox>
